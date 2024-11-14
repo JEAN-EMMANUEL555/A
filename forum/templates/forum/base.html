@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bricoexpo{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Bricoexpo</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'feed' %}">Accueil</a></li>
+                {% if user.is_authenticated %}
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit">Déconnexion</button>
+                        </form>
+                    </li>
+                    <li><a href="{% url 'user_profile' username=user.username %}">Voir le profil</a></li>
+                    <li><a href="{% url 'create_post' %}">Nouveau post</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Connexion</a></li>
+                    <li><a href="{% url 'register' %}">Inscription</a></li>
+                {% endif %}
+            </ul>
+            <form action="{% url 'search_results' %}" method="get" class="search-form">
+                <input type="text" name="q" placeholder="Rechercher..." aria-label="Recherche">
+                <button type="submit">Rechercher</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Bricoexpo. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

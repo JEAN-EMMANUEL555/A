@@ -1,43 +1,61 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+# Modèle UserProfile pour étendre le modèle utilisateur par défaut
 
-class Thread(models.Model):
-    title = models.CharField(max_length=255)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='profile')
+    bio = models.TextField(max_length=500, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/',
+                                        blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.user.username}'s profile"
+
+# Modèle Post pour les publications des utilisateurs
+
 
 class Post(models.Model):
+    title = models.CharField(max_length=255, default="Sans titre")
     content = models.TextField()
-    photo = models.ImageField(upload_to='photos/', blank=True, null=True)  # Nouveau champ pour la photo
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    thread = models.ForeignKey(Thread, related_name='posts', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='posts/', null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Post par {self.author} dans {self.thread.title}'
+        return f"Post by {self.author.user.username} on {self.created_at}"
 
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+# Modèle Commentaire pour les commentaires sous chaque post
 
-    class Meta:
-        unique_together = ('user', 'post')  # Un utilisateur ne peut aimer un post qu'une seule fois
 
 class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,
+                             related_name='comments')
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     content = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'Comment by {self.author} on {self.post}'
+        return f"Comment by {self.author.user.username} on {self.created_at}"
 
-class Follow(models.Model):
-    follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
-    following = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+# Modèle Like pour enregistrer les "J'aime" pour les posts et les commentaires
+
+
+class Like(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    post = models.ForeignKey(
+          Post, on_delete=models.CASCADE, related_name='likes', null=True,
+          blank=True
+        )
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE,
+                                related_name='likes', null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('follower', 'following')  # Un utilisateur ne peut suivre un autre utilisateur qu'une seule fois
+        unique_together = ('user', 'post', 'comment')
+
+    def __str__(self):
+        target = self.post if self.post else self.comment
+        return f"Like by {self.user.user.username} on {target}"

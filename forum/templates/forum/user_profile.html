@@ -1,0 +1,25 @@
+{% extends "forum/base.html" %}
+{% block content %}
+    <h2>Profil de {{ profile.user.username }}</h2>
+    <p>Nom : {{ profile.user.first_name }} {{ profile.user.last_name }}</p>
+    <p>Nombre d'abonnés : {{ profile.followers.count }}</p>
+    <p>Suit : {{ profile.following.count }}</p>
+
+    {% if profile != request.user.profile %}
+        {% if request.user.profile.following.filter(id=profile.id).exists %}
+            <a href="{% url 'follow_user' profile.user.id %}">Se désabonner</a>
+        {% else %}
+            <a href="{% url 'follow_user' profile.user.id %}">S'abonner</a>
+        {% endif %}
+    {% endif %}
+
+    <h3>Publications</h3>
+    <div class="posts">
+        {% for post in profile.posts.all %}
+            <div class="post">
+                <p>{{ post.content }}</p>
+                <p>{{ post.created_at }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

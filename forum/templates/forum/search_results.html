@@ -1,0 +1,16 @@
+{% extends "forum\base.html" %}
+{% block content %}
+    <h2>Résultats de recherche pour "{{ query }}"</h2>
+    <div class="results">
+        {% if results %}
+            {% for profile in results %}
+                <div class="user-profile">
+                    <a href="{% url 'user_profile' profile.user.id %}">{{ profile.user.username }}</a>
+                    <p>{{ profile.user.first_name }} {{ profile.user.last_name }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun utilisateur trouvé.</p>
+        {% endif %}
+    </div>
+{% endblock %}
