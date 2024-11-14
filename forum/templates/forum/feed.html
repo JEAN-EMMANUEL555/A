@@ -1,5 +1,155 @@
-{% extends "forum\base.html" %}
+{% extends "forum/base.html" %}
 {% block content %}
+    <style>
+        /* Styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #2c3e50;
+            font-size: 2.2rem;
+        }
+
+        /* Section des posts */
+        .posts {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Style de chaque post */
+        .post {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #3498db;
+        }
+
+        /* Auteur du post */
+        .post h3 {
+            font-size: 1.2rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        /* Contenu du post */
+        .post p {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Image de la publication */
+        .post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        /* Date de création */
+        .post p:last-of-type {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* Boutons d'interaction */
+        .post a {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s ease-in-out;
+        }
+
+        /* Style pour le bouton "J'aime" */
+        .post a.like-btn {
+            background-color: #e74c3c; /* Rouge vif */
+            color: #fff;
+            border: 2px solid transparent;
+        }
+
+        .post a.like-btn:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+        }
+
+        /* Style pour le bouton "Commenter" */
+        .post a.comment-btn {
+            background-color: #3498db; /* Bleu */
+            color: #fff;
+            border: 2px solid transparent;
+        }
+
+        .post a.comment-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        /* Ajouter des icônes aux boutons */
+        .post a i {
+            margin-right: 8px;
+        }
+
+        /* Section des commentaires */
+        .comments {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .comments p {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Auteur du commentaire */
+        .comments p strong {
+            color: #2c3e50;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .posts {
+                padding: 10px;
+            }
+
+            .post {
+                padding: 15px;
+            }
+
+            .post h3 {
+                font-size: 1rem;
+            }
+
+            .post a {
+                padding: 5px;
+                font-size: 0.8rem;
+            }
+
+            .comments p {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+
     <h1>Fil d'actualité</h1>
     <div class="posts">
         {% for post in posts %}
@@ -10,11 +160,15 @@
                     <img src="{{ post.image.url }}" alt="Image de la publication">
                 {% endif %}
                 <p>{{ post.created_at|date:"d M Y, H:i" }}</p>
-                
+
                 <!-- Boutons pour les interactions -->
-                <a href="{% url 'like_post' post.id %}">J'aime ({{ post.likes.count }})</a>
-                <a href="{% url 'add_comment' post.id %}">Commenter ({{ post.comments.count }})</a>
-                
+                <a href="{% url 'like_post' post.id %}" class="like-btn">
+                    <i class="fa fa-thumbs-up"></i> J'aime ({{ post.likes.count }})
+                </a>
+                <a href="{% url 'add_comment' post.id %}" class="comment-btn">
+                    <i class="fa fa-comment"></i> Commenter ({{ post.comments.count }})
+                </a>
+
                 <!-- Afficher les commentaires -->
                 <div class="comments">
                     {% for comment in post.comments.all %}

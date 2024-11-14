@@ -1,13 +1,15 @@
 from django.urls import path
-from .views import(
+from .views import (
     home,
     login_view,
     register_view,
-    feed, create_post,
+    feed,
+    create_post,
     add_comment,
     like_post,
     user_profile,
-    search_view)
+    search_view
+)
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [

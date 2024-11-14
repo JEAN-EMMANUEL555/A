@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import UserProfile, Post, Comment, Like
-from .forms import PostForm, CommentForm, RegistrationForm
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import Http404
+from django.contrib.auth.models import User
+from .models import UserProfile
+from .models import Post, Like
+from .models import Comment
+from .forms import PostForm, CommentForm, RegistrationForm
 
 
 def home(request):
@@ -138,7 +139,7 @@ def user_profile(request, username):
         'followers_count': followers_count,
         'following_count': following_count,
     }
-    return render(request, 'user_profile.html', context)
+    return render(request, 'forum/user_profile.html', context)
 
 
 @login_required

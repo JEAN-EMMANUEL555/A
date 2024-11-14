@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Bricoexpo</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'home.css' %}">
 </head>
 <body>
     <header>
         <h1>Welcome to Bricoexpo</h1>
         <nav>
             <ul>
-                
+                <!-- Liens de navigation peuvent être ajoutés ici -->
             </ul>
         </nav>
     </header>
@@ -21,8 +21,16 @@
         <section class="cta">
             <h2>Access Your Account</h2>
             <div class="cta-buttons">
-                <button onclick="window.location.href='{% url 'login' %}'" aria-label="Login to your account">Login</button>
-                <button onclick="window.location.href='{% url 'register' %}'" aria-label="Create a new account">Register</button>
+                <button 
+                    onclick="window.location.href='{% url 'login' %}'" 
+                    aria-label="Login to your account">
+                    Login
+                </button>
+                <button 
+                    onclick="window.location.href='{% url 'register' %}'" 
+                    aria-label="Create a new account">
+                    Register
+                </button>
             </div>
         </section>
     </main>
